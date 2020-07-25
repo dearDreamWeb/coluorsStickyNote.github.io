@@ -3,7 +3,7 @@
     <!-- 头部组件 -->
     <v-header :dataList="dataList" @showDialog="showDialog" />
     <!-- 便利贴区域 -->
-    <section class="content">
+    <section v-if="dataList.length > 0" class="content">
       <el-row>
         <el-col
           class="card_item"
@@ -12,13 +12,31 @@
           v-for="item in dataList"
           :key="item.id"
         >
-          <el-card class="box-card">
+          <el-card
+            class="box-card"
+            :style="{
+              backgroundColor: item.bgColor,
+              color: ColorReverse(item.bgColor),
+            }"
+          >
             <div slot="header">
-              <span>{{ item.title }}</span>
-              <el-button style="float: right; padding: 3px 0" type="text"
+              <span class="card_title">{{ item.title }}</span>
+              <el-button
+                :style="{
+                  float: 'right',
+                  padding: '3px 0',
+                  color: ColorReverse(item.bgColor),
+                }"
+                type="text"
                 >删除</el-button
               >
-              <el-button style="float: right; padding: 3px 5px" type="text"
+              <el-button
+                :style="{
+                  float: 'right',
+                  padding: '3px 5px',
+                  color: ColorReverse(item.bgColor),
+                }"
+                type="text"
                 >编辑</el-button
               >
             </div>
@@ -33,8 +51,9 @@
         </el-col>
       </el-row>
     </section>
+    <h1 v-else class="no_data">暂无便利贴</h1>
     <!-- 模态框 -->
-    <v-dialog />
+    <v-dialog v-if="isShowDialog" @showDialog="showDialog" />
   </div>
 </template>
 
@@ -52,7 +71,7 @@ import category from "@/model/cateEleme";
 })
 export default class Home extends Vue {
   private dataList: "Array<ItemData>" = this.$store.state.dataAction.readData(); // 获取数据
-  private isShowDialog: boolean = false;  //是否显示模态框
+  private isShowDialog: boolean = false; //是否显示模态框
 
   // 获取分类名
   getCategoryName(categoryId: category) {
@@ -71,7 +90,14 @@ export default class Home extends Vue {
 
   // 显示模态框
   showDialog(data: boolean): void {
-    console.log(data);
+    this.isShowDialog = data;
+  }
+
+  // 颜色取反
+  ColorReverse(OldColorValue: any): string {
+    var OldColorValue: any = "0x" + OldColorValue.replace(/#/g, "");
+    var str = "000000" + (0xffffff - OldColorValue).toString(16);
+    return "#" + str.substring(str.length - 6, str.length);
   }
 
   /**
@@ -95,18 +121,29 @@ export default class Home extends Vue {
     .card_item {
       margin-bottom: 10px;
       .box-card {
+        .card_title {
+          font-weight: 700;
+          font-style: italic;
+        }
         .time {
           display: flex;
           justify-content: space-between;
           padding-bottom: 10px;
-          color: rgba(0, 0, 0, 0.5);
           font-size: 12px;
           & :nth-child(n) {
             font-weight: 700;
           }
         }
+        .text {
+          line-height: 1.2;
+        }
       }
     }
+  }
+  .no_data {
+    font-size: 50px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.5);
   }
 }
 </style>

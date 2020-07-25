@@ -22,13 +22,34 @@
         </el-select>
 
         <!-- 颜色选择器 -->
-        <el-color-picker v-model="color1" size="mini"></el-color-picker>
+        <el-tooltip
+          effect="dark"
+          content="选择便利贴的背景颜色"
+          placement="bottom"
+          :hide-after="2000"
+        >
+          <el-color-picker v-model="color1" size="mini"></el-color-picker>
+        </el-tooltip>
 
         <!-- 保存按钮 -->
-        <i class="el-icon-success save_btn" @click.prevent="addItemData"></i>
+        <el-tooltip
+          effect="dark"
+          content="保存"
+          placement="bottom"
+          :hide-after="2000"
+        >
+          <i class="el-icon-success save_btn" @click.prevent="addItemData"></i>
+        </el-tooltip>
 
         <!-- 关闭按钮 -->
-        <i class="el-icon-error close_btn"></i>
+        <el-tooltip
+          effect="dark"
+          content="关闭"
+          placement="bottom"
+          :hide-after="2000"
+        >
+          <i class="el-icon-error close_btn" @click.prevent="colseDialog"></i>
+        </el-tooltip>
       </header>
       <section>
         <el-input
@@ -45,6 +66,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import ItemData from "@/model/dataItem";
+import category from "@/model/cateEleme";
 
 @Component({})
 export default class Dialog extends Vue {
@@ -80,9 +103,37 @@ export default class Dialog extends Vue {
       this.$message.info("内容不能为空");
       return;
     }
-    
+
+    // 添加数据
+    let itemData = new ItemData(
+      1,
+      this.selectValue,
+      this.inputTitle,
+      this.inputTextarea,
+      this.color1
+    );
+    this.$store.state.dataAction.addData(itemData);
+    this.$message.success("添加数据成功");
+    this.$emit("showDialog", false);
   }
-  //   @Prop() private dataList!: any[];
+
+  // 关闭模态框
+  colseDialog() {
+    this.$confirm("数据未保存，确定离开？", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    })
+      .then(() => {
+        this.$emit("showDialog", true);
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消关闭",
+        });
+      });
+  }
 
   mounted() {}
 }

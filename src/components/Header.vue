@@ -62,7 +62,7 @@ export default class Header extends Vue {
   }
   // 点击添加按钮向父组件传递
   addItem():void{
-    this.$emit("showDialog",true)
+    this.$emit("showDialog",true);
   }
 }
 </script>

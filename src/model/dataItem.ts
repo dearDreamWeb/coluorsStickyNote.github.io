@@ -5,11 +5,13 @@ class DataItem {
   title!: string;
   content!: string;
   createTime!: string;
+  bgColor!: string;
   constructor(
     id: number = -1,
     categoryId: category = -1,
     title: string = "",
     content: string = "",
+    bgColor: string = "",
     createTime: number = -1
   ) {
     this.id = id;
@@ -17,6 +19,7 @@ class DataItem {
     this.title = title;
     this.content = content;
     this.createTime = this.dateFormat(createTime);
+    this.bgColor = bgColor;
   }
 
   dateFormat(time: number): string {

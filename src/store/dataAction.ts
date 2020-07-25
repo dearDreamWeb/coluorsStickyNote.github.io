@@ -57,6 +57,7 @@ class DataAction {
       itemData.categoryId = item.categoryId;
       itemData.title = item.title;
       itemData.content = item.content;
+      itemData.bgColor = item.bgColor;
       this.saveLocalData(this.dataList);
     }
   }
