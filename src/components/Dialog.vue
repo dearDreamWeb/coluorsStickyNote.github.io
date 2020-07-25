@@ -1,12 +1,141 @@
 <template>
-  <div class="dialog"></div>
+  <div class="dialog" @scroll.prevent.stop="">
+    <div class="content_wrap">
+      <header class="cotent_header">
+        <!-- 标题 -->
+        <el-input
+          v-model="inputTitle"
+          placeholder="标题，标题字数不能超过10个"
+          class="input_title"
+          :maxlength="10"
+        ></el-input>
+
+        <!-- 选择器 -->
+        <el-select v-model="selectValue" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+
+        <!-- 颜色选择器 -->
+        <el-color-picker v-model="color1" size="mini"></el-color-picker>
+
+        <!-- 保存按钮 -->
+        <i class="el-icon-success save_btn" @click.prevent="addItemData"></i>
+
+        <!-- 关闭按钮 -->
+        <i class="el-icon-error close_btn"></i>
+      </header>
+      <section>
+        <el-input
+          type="textarea"
+          :rows="15"
+          placeholder="请输入内容"
+          v-model="inputTextarea"
+        >
+        </el-input>
+      </section>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
+
+@Component({})
 export default class Dialog extends Vue {
-//   @Prop() private dataList!: any[];
+  private inputTitle: string = "";
+  private selectValue: number = 0;
+  private inputTextarea: string = "";
+  private color1: string = "#fff";
+  private options: object[] = [
+    {
+      value: 0,
+      label: "工作",
+    },
+    {
+      value: 1,
+      label: "生活",
+    },
+    {
+      value: 2,
+      label: "学习",
+    },
+  ];
+
+  // 保存数据
+  addItemData(): void {
+    // 校验标题
+    if (!this.inputTitle.trim()) {
+      this.$message.info("标题不能为空");
+      return;
+    }
+
+    // 校验内容
+    if (!this.inputTextarea.trim()) {
+      this.$message.info("内容不能为空");
+      return;
+    }
+    
+  }
+  //   @Prop() private dataList!: any[];
+
+  mounted() {}
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.dialog {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  .content_wrap {
+    padding: 10px;
+    width: 40%;
+    background-color: #fff;
+    border-radius: 5px;
+    .cotent_header {
+      display: grid;
+      grid-template-columns: 5fr 2fr auto 22px 22px;
+      grid-column-gap: 20px;
+      align-items: center;
+      padding-bottom: 20px;
+      .save_btn,
+      .close_btn {
+        font-size: 22px;
+        text-align: center;
+      }
+      .save_btn {
+        &:hover {
+          cursor: pointer;
+          color: green;
+        }
+      }
+      .close_btn {
+        &:hover {
+          cursor: pointer;
+          color: red;
+        }
+      }
+    }
+    @media screen and (max-width: 768px) {
+      width: 100%;
+      height: 100%;
+      .cotent_header {
+        grid-template-columns: 5fr 3fr 22px 22px;
+      }
+    }
+  }
+}
+</style>

@@ -10,17 +10,31 @@
       </el-col>
       <el-col class="title">彩色便利贴</el-col>
       <el-col class="utils">
-        <span class="el-icon-circle-plus add"> </span>
+        <!-- 添加按钮 -->
+        <span class="el-icon-circle-plus add" @click = "addItem"> </span>
         <!-- 下拉菜单 -->
-        <el-dropdown trigger="click" class="all">
+        <el-dropdown
+          trigger="click"
+          placement="bottom-start"
+          @command="handleCommand"
+          class="all"
+        >
           <span class="el-dropdown-link">
-            全部
-            <i class="el-icon-arrow-down el-icon--right"></i>
+            <el-badge :value="mesCount" :max="99" :hidden="mesCount <= 0">
+              <i class="el-icon-message-solid message"></i>
+            </el-badge>
           </span>
+
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>黄金糕</el-dropdown-item>
-            <el-dropdown-item>狮子头</el-dropdown-item>
-            <el-dropdown-item>螺蛳粉</el-dropdown-item>
+            <el-dropdown-item
+              v-for="(item, index) in categoryName"
+              :key="index"
+              :command="index"
+              >{{ item }}
+              <span class="category_count" v-show="categoryCount(index) !== 0">{{
+                categoryCount(index)
+              }}</span>
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -28,8 +42,29 @@
   </div>
 </template>
 
-<script>
-export default {};
+<script lang="ts">
+import { Component, Vue, Prop } from "vue-property-decorator";
+import category from "@/model/cateEleme";
+@Component({})
+export default class Header extends Vue {
+  @Prop() private dataList!: any[];
+  private mesCount: number = this.dataList.length;  // 所有的便利贴的数量
+  private categoryName: string[] = ["工作", "生活", "学习"];   // 便利贴的所以分类名称
+
+  // 下拉框选中
+  handleCommand(command: category): void {
+    console.log(category[command]);
+  }
+  // 获取每个分类的数量
+  categoryCount(index: category): number {
+    let arr = this.dataList.filter(item => item.categoryId === index);
+    return arr.length;
+  }
+  // 点击添加按钮向父组件传递
+  addItem():void{
+    this.$emit("showDialog",true)
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -54,7 +89,9 @@ export default {};
       position: relative;
       flex-basis: 150px;
       height: 100%;
-      .add {
+      // 添加和消息按钮
+      .add,
+      .all {
         position: absolute;
         left: 0;
         bottom: -15px;
@@ -69,24 +106,23 @@ export default {};
         }
       }
       .all {
-        position: absolute;
-        right: 0;
-        bottom: 20px;
-        font-family: "宋体";
-        font-weight: 600;
-        font-size: 18px;
-        color: #fff;
-        &:hover {
-          cursor: pointer;
-        }
-        &:focus {
-          outline: none;
-        }
-        .el-icon--right {
-          margin-left: 0;
-        }
+        left: 50px;
       }
     }
   }
+}
+// 分类计数的数字样式
+.category_count {
+  background-color: #f56c6c;
+  border-radius: 10px;
+  color: #fff;
+  display: inline-block;
+  font-size: 12px;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 5px;
+  text-align: center;
+  white-space: nowrap;
+  border: 1px solid #fff;
 }
 </style>

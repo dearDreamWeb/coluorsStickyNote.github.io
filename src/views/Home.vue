@@ -1,10 +1,17 @@
 <template>
   <div class="home" ref="home">
     <!-- 头部组件 -->
-    <v-header />
+    <v-header :dataList="dataList" @showDialog="showDialog" />
+    <!-- 便利贴区域 -->
     <section class="content">
       <el-row>
-        <el-col :span="7" :offset="1" v-for="item in dataList" :key="item.id">
+        <el-col
+          class="card_item"
+          :sm="7"
+          :offset="1"
+          v-for="item in dataList"
+          :key="item.id"
+        >
           <el-card class="box-card">
             <div slot="header">
               <span>{{ item.title }}</span>
@@ -45,6 +52,7 @@ import category from "@/model/cateEleme";
 })
 export default class Home extends Vue {
   private dataList: "Array<ItemData>" = this.$store.state.dataAction.readData(); // 获取数据
+  private isShowDialog: boolean = false;  //是否显示模态框
 
   // 获取分类名
   getCategoryName(categoryId: category) {
@@ -60,6 +68,12 @@ export default class Home extends Vue {
       home.style.height = windowH + "px";
     }
   }
+
+  // 显示模态框
+  showDialog(data: boolean): void {
+    console.log(data);
+  }
+
   /**
    * mounted生命周期
    */
@@ -75,17 +89,21 @@ export default class Home extends Vue {
   font-family: "宋体";
   background: #eee;
   .content {
+    margin-left: 10vw;
     padding-top: 30px;
     width: 80vw;
-    .box-card {
-      .time {
-        display: flex;
-        justify-content: space-between;
-        padding-bottom: 10px;
-        color: rgba(0, 0, 0, 0.5);
-        font-size: 12px;
-        & :nth-child(n) {
-          font-weight: 700;
+    .card_item {
+      margin-bottom: 10px;
+      .box-card {
+        .time {
+          display: flex;
+          justify-content: space-between;
+          padding-bottom: 10px;
+          color: rgba(0, 0, 0, 0.5);
+          font-size: 12px;
+          & :nth-child(n) {
+            font-weight: 700;
+          }
         }
       }
     }
