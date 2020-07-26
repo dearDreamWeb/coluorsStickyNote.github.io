@@ -1,7 +1,11 @@
 <template>
   <div class="home" ref="home">
     <!-- 头部组件 -->
-    <v-header :dataList="dataList" @showDialog="showDialog" />
+    <v-header
+      :dataList="dataList"
+      @showDialog="showDialog"
+      @categoryIdData="categoryIdData"
+    />
     <!-- 便利贴区域 -->
     <section v-if="dataList.length > 0" class="content">
       <ul ref="cardWrap">
@@ -27,6 +31,7 @@
                   color: ColorReverse(item.bgColor),
                 }"
                 type="text"
+                @click.prevent="deleteItem(item.id)"
                 >删除</el-button
               >
               <el-button
@@ -63,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Inject } from "vue-property-decorator";
 import Header from "@/components/Header.vue";
 import Dialog from "@/components/Dialog.vue";
 import ItemData from "@/model/dataItem";
@@ -76,7 +81,8 @@ import DataItem from "@/model/dataItem";
   },
 })
 export default class Home extends Vue {
-  private dataList: "Array<ItemData>" = this.$store.state.dataAction.readData(); // 获取数据
+  @Inject() private componentReload!: any; // 祖先组件传递下来用来刷新组件用的
+  private dataList: ItemData[] = this.$store.state.dataAction.readData(); // 获取数据
   private isShowDialog: boolean = false; // 是否显示模态框
   private editItemData!: DataItem | undefined;
 
@@ -88,7 +94,7 @@ export default class Home extends Vue {
   // 设置整体的背景颜色
   bodySetBc(): void {
     // setTimeout(() => {
-    let home: any = this.$refs.home;
+    let home: HTMLElement = this.$refs.home;
     let homeH: number = parseInt(window.getComputedStyle(home).height, 10);
     let windowH: number = window.innerHeight;
     if (homeH < windowH) {
@@ -110,8 +116,7 @@ export default class Home extends Vue {
   // 添加完数据关闭模态框并更新dataList
   saveData(data: boolean): void {
     this.showDialog(data);
-    this.editItemData = undefined;
-    this.dataList = this.$store.state.dataAction.readData();
+    this.componentReload();
   }
 
   // 颜色取反
@@ -132,6 +137,31 @@ export default class Home extends Vue {
     this.isShowDialog = true;
   }
 
+  // 删除便利贴
+  deleteItem(id: number): void {
+    this.$confirm("该操作永久删除该便利贴，确定删除？", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    })
+      .then(() => {
+        this.$store.state.dataAction.removeItem(id);
+        this.$message.success("删除成功");
+        this.componentReload();
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消删除",
+        });
+      });
+  }
+
+  // 显示该分类下的所有数据
+  categoryIdData(cateId: category) {
+    this.dataList = this.$store.state.dataAction.getCategoryData(cateId);
+    this.$nextTick(() => this.cardPosition());
+  }
   // 瀑布流布局
   cardPosition(): void {
     let cardWrap: any = this.$refs.cardWrap;
@@ -175,7 +205,7 @@ export default class Home extends Vue {
   }
 
   // 窗口大小变化事件 节流操作
-  resizeEvent() {
+  resizeEvent(): void {
     let timer: any = null;
     window.addEventListener("resize", () => {
       if (timer) {
@@ -192,7 +222,7 @@ export default class Home extends Vue {
   }
 
   // 滚动条滚动事件 节流
-  scrollEvent() {
+  scrollEvent(): void {
     window.addEventListener("scroll", () => {
       let timer: any = null;
       if (timer) {
@@ -202,7 +232,7 @@ export default class Home extends Vue {
           this.bodySetBc();
           window.clearTimeout(timer);
           timer = null;
-        }, 300);
+        }, 100);
       }
     });
   }

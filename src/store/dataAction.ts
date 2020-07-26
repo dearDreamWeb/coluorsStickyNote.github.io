@@ -26,6 +26,13 @@ class DataAction {
     return arr[cateId];
   }
 
+  //   获取分类下的所有数据
+  getCategoryData(cateId: category): object[] {
+    let arr = this.readData();
+    let filterArr = arr.filter(item => item.categoryId === cateId);
+    return filterArr;
+  }
+
   //   添加数据, 返回id
   addData(newItem: dataItem): number {
     if (this.dataList === null) {

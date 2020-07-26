@@ -75,7 +75,7 @@ export default class Dialog extends Vue {
   private inputTitle: string = "";
   private selectValue: number = 0;
   private inputTextarea: string = "";
-  private color1: string = "#fff";
+  private color1: string = "#323131";
   private options: object[] = [
     {
       value: 0,

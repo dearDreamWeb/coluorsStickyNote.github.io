@@ -45,17 +45,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import category from "@/model/cateEleme";
+import ItemData from "@/model/dataItem";
 @Component({})
 export default class Header extends Vue {
-  @Prop() private dataList!: any[];
+  private dataList: ItemData[] = this.$store.state.dataAction.readData(); // 获取数据
   private mesCount: number = this.dataList.length; // 所有的便利贴的数量
   private categoryName: string[] = ["工作", "生活", "学习"]; // 便利贴的所以分类名称
 
   // 下拉框选中
   handleCommand(command: category): void {
-    console.log(category[command]);
+    this.$emit("categoryIdData", command);
   }
   // 获取每个分类的数量
   categoryCount(index: category): number {
@@ -68,10 +69,10 @@ export default class Header extends Vue {
   }
 
   // 监听dataList
-  @Watch("dataList")
-  getDataList(newValue: object[]) {
-    this.mesCount = newValue.length;
-  }
+  // @Watch("dataList")
+  // getDataList(newValue: object[]) {
+  //   this.mesCount = newValue.length;
+  // }
 }
 </script>
 
