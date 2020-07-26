@@ -8,7 +8,7 @@
           fit="fill"
         ></el-image>
       </el-col>
-      <el-col class="title">彩色便利贴</el-col>
+      <el-col class="title">多彩便利贴</el-col>
       <el-col class="utils">
         <!-- 添加按钮 -->
         <span class="el-icon-circle-plus add" @click="addItem"> </span>
