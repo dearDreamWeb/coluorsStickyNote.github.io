@@ -1,5 +1,5 @@
 <template>
-  <div class="dialog" @scroll.prevent.stop="">
+  <div class="dialog">
     <div class="content_wrap">
       <header class="cotent_header">
         <!-- 标题 -->
@@ -158,6 +158,7 @@ export default class Dialog extends Vue {
       this.color1 = this.editItemData.bgColor;
     }
   }
+
   mounted() {
     this.editData();
   }
@@ -209,7 +210,8 @@ export default class Dialog extends Vue {
       width: 100%;
       height: 100%;
       .cotent_header {
-        grid-template-columns: 5fr 3fr 22px 22px;
+        grid-template-columns: 5fr 3fr auto 22px 22px;
+        grid-column-gap: 10px;
       }
     }
   }

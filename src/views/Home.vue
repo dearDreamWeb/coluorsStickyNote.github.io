@@ -4,11 +4,10 @@
     <v-header :dataList="dataList" @showDialog="showDialog" />
     <!-- 便利贴区域 -->
     <section v-if="dataList.length > 0" class="content">
-      <el-row>
-        <el-col
+      <ul ref="cardWrap">
+        <li
+          ref="cardItem"
           class="card_item"
-          :span="7"
-          :offset="1"
           v-for="item in dataList"
           :key="item.id"
         >
@@ -49,8 +48,8 @@
               {{ item.content }}
             </div>
           </el-card>
-        </el-col>
-      </el-row>
+        </li>
+      </ul>
     </section>
     <h1 v-else class="no_data">暂无便利贴</h1>
     <!-- 模态框 -->
@@ -88,12 +87,16 @@ export default class Home extends Vue {
 
   // 设置整体的背景颜色
   bodySetBc(): void {
+    // setTimeout(() => {
     let home: any = this.$refs.home;
     let homeH: number = parseInt(window.getComputedStyle(home).height, 10);
     let windowH: number = window.innerHeight;
     if (homeH < windowH) {
       home.style.height = windowH + "px";
+    } else {
+      home.style.height = windowH + document.documentElement.scrollTop + "px";
     }
+    // }, 300);
   }
 
   // 显示模态框
@@ -129,18 +132,96 @@ export default class Home extends Vue {
     this.isShowDialog = true;
   }
 
+  // 瀑布流布局
+  cardPosition(): void {
+    let cardWrap: any = this.$refs.cardWrap;
+    let cardItems: any = this.$refs.cardItem;
+    // 父元素的宽度
+    let cardWrapW: number = parseInt(
+      window.getComputedStyle(cardWrap).width,
+      10
+    );
+    cardWrap.style.position = "relative";
+    // columns代表列数
+    let columns: number = 3;
+    // 子元素的宽度
+    let cardItemW: number = cardWrapW / 3;
+    // 记录每行的高度
+    let arr = new Array(columns).fill(0);
+
+    // 当屏幕宽度大于768px时，瀑布流布局；小于或等于时，变成块级元素
+    if (cardWrapW > 768) {
+      // 遍历每个子元素，通过arr数组中找到一列的高度最小，把子元素放到哪一列最后面
+      cardItems.forEach((item: HTMLElement, i: number) => {
+        let min: number = Math.min(...arr);
+        let minIndex: number = arr.indexOf(min);
+        item.style.position = "absolute";
+        item.style.padding = "0 20px 10px";
+        item.style.width = cardItemW + "px";
+        item.style.left = minIndex * cardItemW + "px";
+        item.style.top = min + "px";
+        let itemH: number = parseInt(window.getComputedStyle(item).height, 10);
+        arr[minIndex] += itemH;
+      });
+    } else {
+      cardItems.forEach((item: HTMLElement) => {
+        item.style.position = "relative";
+        item.style.padding = "0 0 10px";
+        item.style.width = cardWrapW + "px";
+        item.style.left = "auto";
+        item.style.top = "auto";
+      });
+    }
+  }
+
+  // 窗口大小变化事件 节流操作
+  resizeEvent() {
+    let timer: any = null;
+    window.addEventListener("resize", () => {
+      if (timer) {
+        return;
+      } else {
+        timer = setTimeout(() => {
+          this.bodySetBc();
+          this.cardPosition();
+          window.clearTimeout(timer);
+          timer = null;
+        }, 100);
+      }
+    });
+  }
+
+  // 滚动条滚动事件 节流
+  scrollEvent() {
+    window.addEventListener("scroll", () => {
+      let timer: any = null;
+      if (timer) {
+        return;
+      } else {
+        timer = setTimeout(() => {
+          this.bodySetBc();
+          window.clearTimeout(timer);
+          timer = null;
+        }, 300);
+      }
+    });
+  }
+
   /**
    * mounted生命周期
    */
   mounted() {
     this.bodySetBc();
-    window.addEventListener("resize", () => this.bodySetBc());
+    this.$nextTick(() => this.cardPosition());
+    this.resizeEvent();
+    this.scrollEvent();
   }
 }
 </script>
 <style lang="scss" scoped>
 .home {
   width: 100vw;
+  height: 100vh;
   font-family: "宋体";
   background: #eee;
   .content {
@@ -148,7 +229,6 @@ export default class Home extends Vue {
     padding-top: 30px;
     width: 80vw;
     .card_item {
-      margin-bottom: 10px;
       .box-card {
         .card_title {
           font-weight: 700;
@@ -167,6 +247,13 @@ export default class Home extends Vue {
           white-space: pre-wrap;
           line-height: 1.2;
         }
+      }
+    }
+    @media screen and (max-width: 768px) {
+      margin: 0;
+      width: 100vw;
+      .card_item {
+        padding-bottom: 20px;
       }
     }
   }

@@ -1,34 +1,20 @@
 {
   "defaultSeverity": "warning",
-  "extends": [
-    "tslint:recommended"
-  ],
+  "extends": ["tslint:recommended"],
   "linterOptions": {
-    "exclude": [
-      "node_modules/**"
-    ]
+    "exclude": ["node_modules/**"]
   },
   "rules": {
-    "indent": [
-      true,
-      "spaces",
-      2
-    ],
+    "indent": [true, "spaces", 2],
     "interface-name": false,
     "member-access": false,
     "no-consecutive-blank-lines": false,
     "object-literal-sort-keys": false,
     "ordered-imports": false,
-    "quotemark": [
-      true,
-      "double"
-    ],
+    "quotemark": [true, "double"],
     "arrow-parens": false,
     "semicolon": false,
-    "no-console": [
-      true,
-      "warning"
-    ],
+    "no-console": [true, "warning"],
     "no-trailing-whitespace": false,
     "prefer-const": false,
     "whitespace": [
@@ -39,10 +25,7 @@
       "check-separator",
       "check-type"
     ],
-    "comment-format": [
-      true,
-      "check-space"
-    ],
+    "comment-format": [true, "check-space"],
     "one-line": [
       true,
       "check-open-brace",
@@ -62,6 +45,7 @@
     "noImplicitThis": false,
     "no-shadow": false,
     "no-shadowed-variable": false,
+    "noImplicitAny": false,
     "only-arrow-functions": false
   }
 }
