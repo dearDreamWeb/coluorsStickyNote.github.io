@@ -5,9 +5,9 @@
         <!-- 标题 -->
         <el-input
           v-model="inputTitle"
-          placeholder="标题，标题字数不能超过10个"
+          placeholder="标题，标题字数不能超过15个"
           class="input_title"
-          :maxlength="10"
+          :maxlength="15"
         ></el-input>
 
         <!-- 选择器 -->
@@ -65,12 +65,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import ItemData from "@/model/dataItem";
 import category from "@/model/cateEleme";
 
 @Component({})
 export default class Dialog extends Vue {
+  @Prop() private editItemData!: ItemData | undefined;
   private inputTitle: string = "";
   private selectValue: number = 0;
   private inputTextarea: string = "";
@@ -104,17 +105,30 @@ export default class Dialog extends Vue {
       return;
     }
 
-    // 添加数据
-    let itemData = new ItemData(
-      1,
-      this.selectValue,
-      this.inputTitle,
-      this.inputTextarea,
-      this.color1
-    );
-    this.$store.state.dataAction.addData(itemData);
-    this.$message.success("添加数据成功");
-    this.$emit("showDialog", false);
+    // 如果 editItemData有值，说明是编辑数据，没有值说明是添加数据
+    if (this.editItemData) {
+      let itemData = Object.assign(this.editItemData, {
+        title: this.inputTitle,
+        content: this.inputTextarea,
+        categoryId: this.selectValue,
+        bgColor: this.color1,
+      });
+      this.$store.state.dataAction.editItem(itemData);
+      this.$message.success("修改数据成功");
+    } else {
+      // 添加数据
+      let itemData = new ItemData(
+        1,
+        this.selectValue,
+        this.inputTitle,
+        this.inputTextarea,
+        this.color1
+      );
+      this.$store.state.dataAction.addData(itemData);
+      this.$message.success("添加数据成功");
+    }
+
+    this.$emit("saveData", false);
   }
 
   // 关闭模态框
@@ -125,7 +139,7 @@ export default class Dialog extends Vue {
       type: "warning",
     })
       .then(() => {
-        this.$emit("showDialog", true);
+        this.$emit("showDialog", false);
       })
       .catch(() => {
         this.$message({
@@ -135,7 +149,18 @@ export default class Dialog extends Vue {
       });
   }
 
-  mounted() {}
+  // 编辑数据
+  editData(): void {
+    if (this.editItemData) {
+      this.inputTitle = this.editItemData.title;
+      this.inputTextarea = this.editItemData.content;
+      this.selectValue = this.editItemData.categoryId;
+      this.color1 = this.editItemData.bgColor;
+    }
+  }
+  mounted() {
+    this.editData();
+  }
 }
 </script>
 

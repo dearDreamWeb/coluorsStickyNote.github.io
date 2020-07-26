@@ -3,7 +3,7 @@ import dataItem from "@/model/dataItem";
 
 class DataAction {
   dataKey!: string;
-  dataList!: Array<dataItem>;
+  dataList!: dataItem[];
 
   constructor(dataKey: string = "stickyNotes") {
     this.dataKey = dataKey;
@@ -42,7 +42,7 @@ class DataAction {
   }
 
   //   保存数据到localStorage里面
-  saveLocalData(arrData: Array<dataItem>): void {
+  saveLocalData(arrData: dataItem[]): void {
     let jsonData = JSON.stringify(arrData);
     window.localStorage.setItem(this.dataKey, jsonData);
   }

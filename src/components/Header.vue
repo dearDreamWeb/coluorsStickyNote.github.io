@@ -11,7 +11,7 @@
       <el-col class="title">彩色便利贴</el-col>
       <el-col class="utils">
         <!-- 添加按钮 -->
-        <span class="el-icon-circle-plus add" @click = "addItem"> </span>
+        <span class="el-icon-circle-plus add" @click="addItem"> </span>
         <!-- 下拉菜单 -->
         <el-dropdown
           trigger="click"
@@ -31,9 +31,11 @@
               :key="index"
               :command="index"
               >{{ item }}
-              <span class="category_count" v-show="categoryCount(index) !== 0">{{
-                categoryCount(index)
-              }}</span>
+              <span
+                class="category_count"
+                v-show="categoryCount(index) !== 0"
+                >{{ categoryCount(index) }}</span
+              >
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -43,13 +45,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import category from "@/model/cateEleme";
 @Component({})
 export default class Header extends Vue {
   @Prop() private dataList!: any[];
-  private mesCount: number = this.dataList.length;  // 所有的便利贴的数量
-  private categoryName: string[] = ["工作", "生活", "学习"];   // 便利贴的所以分类名称
+  private mesCount: number = this.dataList.length; // 所有的便利贴的数量
+  private categoryName: string[] = ["工作", "生活", "学习"]; // 便利贴的所以分类名称
 
   // 下拉框选中
   handleCommand(command: category): void {
@@ -61,8 +63,14 @@ export default class Header extends Vue {
     return arr.length;
   }
   // 点击添加按钮向父组件传递
-  addItem():void{
-    this.$emit("showDialog",true);
+  addItem(): void {
+    this.$emit("showDialog", true);
+  }
+
+  // 监听dataList
+  @Watch("dataList")
+  getDataList(newValue: object[]) {
+    this.mesCount = newValue.length;
   }
 }
 </script>

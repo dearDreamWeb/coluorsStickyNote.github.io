@@ -7,7 +7,7 @@
       <el-row>
         <el-col
           class="card_item"
-          :sm="7"
+          :span="7"
           :offset="1"
           v-for="item in dataList"
           :key="item.id"
@@ -37,6 +37,7 @@
                   color: ColorReverse(item.bgColor),
                 }"
                 type="text"
+                @click.prevent="editData(item)"
                 >编辑</el-button
               >
             </div>
@@ -53,7 +54,12 @@
     </section>
     <h1 v-else class="no_data">暂无便利贴</h1>
     <!-- 模态框 -->
-    <v-dialog v-if="isShowDialog" @showDialog="showDialog" />
+    <v-dialog
+      v-if="isShowDialog"
+      :editItemData="editItemData"
+      @showDialog="showDialog"
+      @saveData="saveData"
+    />
   </div>
 </template>
 
@@ -63,6 +69,7 @@ import Header from "@/components/Header.vue";
 import Dialog from "@/components/Dialog.vue";
 import ItemData from "@/model/dataItem";
 import category from "@/model/cateEleme";
+import DataItem from "@/model/dataItem";
 @Component({
   components: {
     vHeader: Header,
@@ -71,7 +78,8 @@ import category from "@/model/cateEleme";
 })
 export default class Home extends Vue {
   private dataList: "Array<ItemData>" = this.$store.state.dataAction.readData(); // 获取数据
-  private isShowDialog: boolean = false; //是否显示模态框
+  private isShowDialog: boolean = false; // 是否显示模态框
+  private editItemData!: DataItem | undefined;
 
   // 获取分类名
   getCategoryName(categoryId: category) {
@@ -81,7 +89,7 @@ export default class Home extends Vue {
   // 设置整体的背景颜色
   bodySetBc(): void {
     let home: any = this.$refs.home;
-    let homeH: number = parseInt(window.getComputedStyle(home).height);
+    let homeH: number = parseInt(window.getComputedStyle(home).height, 10);
     let windowH: number = window.innerHeight;
     if (homeH < windowH) {
       home.style.height = windowH + "px";
@@ -90,14 +98,35 @@ export default class Home extends Vue {
 
   // 显示模态框
   showDialog(data: boolean): void {
+    if (!data) {
+      this.editItemData = undefined;
+    }
     this.isShowDialog = data;
+  }
+
+  // 添加完数据关闭模态框并更新dataList
+  saveData(data: boolean): void {
+    this.showDialog(data);
+    this.editItemData = undefined;
+    this.dataList = this.$store.state.dataAction.readData();
   }
 
   // 颜色取反
   ColorReverse(OldColorValue: any): string {
-    var OldColorValue: any = "0x" + OldColorValue.replace(/#/g, "");
-    var str = "000000" + (0xffffff - OldColorValue).toString(16);
+    // console.log(OldColorValue)
+    // if (OldColorValue === "#ffffff" || "#FFFFFF") {
+    //   return `#000`
+    // } else {
+    OldColorValue = "0x" + OldColorValue.replace(/#/g, "");
+    let str: string = "000000" + (0xffffff - OldColorValue).toString(16);
     return "#" + str.substring(str.length - 6, str.length);
+  }
+  // }
+
+  // 编辑数据
+  editData(item: DataItem): void {
+    this.editItemData = item;
+    this.isShowDialog = true;
   }
 
   /**
@@ -135,12 +164,14 @@ export default class Home extends Vue {
           }
         }
         .text {
+          white-space: pre-wrap;
           line-height: 1.2;
         }
       }
     }
   }
   .no_data {
+    padding-top: 20px;
     font-size: 50px;
     font-weight: 700;
     color: rgba(0, 0, 0, 0.5);
