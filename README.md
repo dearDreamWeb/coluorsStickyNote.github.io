@@ -1,11 +1,11 @@
 # 项目预览
 项目打包部署到了github和码云上。    
 
-<a href="https://flyingwxb.gitee.io/tally_treasure.gitee.io" target="_blank">码云版预览地址</a>（国内访问会很快）  
-<a href="https://deardreamweb.github.io/tally_treasure.github.io/" target="_blank">github版预览地址</a>（国内访问可能会有点慢，请耐心等待） 
+<a href=" https://flyingwxb.gitee.io/coluorsstickynote.gitee.io" target="_blank">码云版预览地址</a>（国内访问会很快）  
+<a href="https://deardreamweb.github.io/coluorsStickyNote.github.io" target="_blank">github版预览地址</a>（国内访问可能会有点慢，请耐心等待） 
 
 
-# 记账宝
+# 多彩便利贴
 基于Vue2.x和TypeScript开发的在线便利贴，名为多彩便利贴。  
 - 主要使用了Vuex配合TypeScript以及LocalStorage来对数据进行储存和获取。
 - 采用了响应式布局，对移动端也有相应的适配。
