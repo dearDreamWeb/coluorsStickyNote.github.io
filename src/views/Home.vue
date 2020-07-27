@@ -190,6 +190,7 @@ export default class Home extends Vue {
         item.style.width = cardItemW + "px";
         item.style.left = minIndex * cardItemW + "px";
         item.style.top = min + "px";
+        item.style.transition = "all 0.2s ease-in-out";
         let itemH: number = parseInt(window.getComputedStyle(item).height, 10);
         arr[minIndex] += itemH;
       });
@@ -259,6 +260,7 @@ export default class Home extends Vue {
     padding-top: 30px;
     width: 80vw;
     .card_item {
+      padding: 0 20px 10px;
       .box-card {
         .card_title {
           font-weight: 700;
