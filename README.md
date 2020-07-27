@@ -1,7 +1,7 @@
 # 项目预览
 项目打包部署到了github和码云上。    
 
-<a href=" https://flyingwxb.gitee.io/coluorsstickynote.gitee.io" target="_blank">码云版预览地址</a>（国内访问会很快）  
+<a href="https://flyingwxb.gitee.io/coluorsstickynote.gitee.io" target="_blank">码云版预览地址</a>（国内访问会很快）    
 <a href="https://deardreamweb.github.io/coluorsStickyNote.github.io" target="_blank">github版预览地址</a>（国内访问可能会有点慢，请耐心等待） 
 
 
